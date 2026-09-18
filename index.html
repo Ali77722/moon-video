@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>القمر — فيديو تعليمي متحرك</title>
+<style>
+:root{--bg:#020617;--text:#f8fafc;--muted:#cbd5e1;--gold:#f8c75b;--blue:#60a5fa}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#000;font-family:Tahoma,Arial,sans-serif;color:var(--text);overflow:hidden}
+#stage{position:relative;width:100vw;height:100vh;min-height:560px;background:radial-gradient(circle at 50% 45%,#0f1b33 0,#020617 48%,#000 100%);overflow:hidden}
+canvas{position:absolute;inset:0;width:100%;height:100%}
+.scene{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transform:scale(1.02);transition:opacity .45s ease,transform .7s ease;pointer-events:none}
+.scene.active{opacity:1;transform:scale(1);pointer-events:auto}
+.header{position:absolute;top:5%;right:6%;left:6%;display:flex;justify-content:space-between;align-items:center;z-index:3}
+.kicker{font-size:clamp(12px,1.2vw,18px);letter-spacing:.16em;color:#93c5fd}
+.progress{width:min(360px,35vw);height:5px;background:#334155;border-radius:9px;overflow:hidden}
+.progress>i{display:block;height:100%;width:0;background:var(--gold)}
+.center{position:relative;width:100%;height:100%;display:grid;place-items:center}
+.title{font-size:clamp(46px,8vw,110px);font-weight:900;line-height:.95;text-shadow:0 10px 40px #000;transform:translateY(24px);opacity:0;animation:up .9s .1s forwards}
+.sub{margin-top:20px;font-size:clamp(18px,2.3vw,30px);color:var(--gold);opacity:0;animation:up .9s .35s forwards}
+.pill{position:absolute;bottom:9%;padding:14px 24px;border:1px solid #ffffff2a;border-radius:999px;background:#020617aa;backdrop-filter:blur(8px);font-size:clamp(14px,1.7vw,22px)}
+@keyframes up{to{transform:translateY(0);opacity:1}}
+.moon{width:min(46vw,440px);aspect-ratio:1;border-radius:50%;background:
+radial-gradient(circle at 35% 30%,#fff 0,#d7d9dc 13%,#a9adb3 45%,#6f747d 73%,#454a53 100%);
+box-shadow:0 0 80px #cbd5e170, inset -35px -25px 50px #111827aa;
+position:relative;overflow:hidden;animation:float 5s ease-in-out infinite}
+.moon:before,.moon:after{content:"";position:absolute;inset:0;background:
+radial-gradient(circle at 20% 24%,#4b556355 0 4%,transparent 4.5%),
+radial-gradient(circle at 65% 24%,#4b556355 0 3%,transparent 3.5%),
+radial-gradient(circle at 50% 54%,#11182755 0 7%,transparent 7.5%),
+radial-gradient(circle at 73% 62%,#11182755 0 4%,transparent 4.5%),
+radial-gradient(circle at 32% 70%,#11182755 0 5%,transparent 5.5%),
+radial-gradient(circle at 57% 82%,#11182755 0 3%,transparent 3.5%);
+mix-blend-mode:multiply}
+.moon:after{transform:scale(1.22);opacity:.45}
+@keyframes float{50%{transform:translateY(-10px) rotate(1.5deg)}}
+.hero{display:flex;align-items:center;justify-content:center;gap:7vw;padding:7vw}
+.copy{max-width:470px}
+.copy h2{font-size:clamp(32px,4.5vw,60px);margin:0 0 16px}
+.copy p{font-size:clamp(16px,2vw,24px);line-height:1.7;color:var(--muted);margin:0}
+.data{display:flex;flex-direction:column;gap:14px;min-width:min(450px,90vw)}
+.card{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border:1px solid #ffffff18;background:#ffffff08;border-radius:22px;backdrop-filter:blur(8px);transform:translateX(-20px);opacity:0}
+.card b{font-size:clamp(26px,3vw,42px);color:var(--gold)}
+.card span{color:var(--muted);font-size:clamp(14px,1.6vw,20px)}
+.scene.active .card{animation:slide .75s forwards}
+.scene.active .card:nth-child(2){animation-delay:.12s}.scene.active .card:nth-child(3){animation-delay:.24s}.scene.active .card:nth-child(4){animation-delay:.36s}
+@keyframes slide{to{transform:translateX(0);opacity:1}}
+.orbitWrap{position:relative;width:min(72vw,830px);aspect-ratio:1.6}
+.orbit{position:absolute;inset:8% 4%;border:2px dashed #64748b66;border-radius:50%}
+.earth{position:absolute;left:50%;top:50%;width:160px;height:160px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at 35% 30%,#93c5fd,#2563eb 50%,#0f2a5f 100%);box-shadow:0 0 55px #3b82f655}
+.orbMoon{position:absolute;left:0;top:50%;width:82px;height:82px;transform:translateY(-50%);border-radius:50%;background:radial-gradient(circle at 35% 30%,#f8fafc,#9ca3af 65%,#4b5563);box-shadow:0 0 28px #fff4;animation:orbitMove 5s linear infinite}
+@keyframes orbitMove{to{transform:translate(calc(830px - 82px),-50%) rotate(0)}} 
+.label{position:absolute;bottom:2%;left:50%;transform:translateX(-50%);color:#cbd5e1;font-size:clamp(14px,1.7vw,22px)}
+.phaseRow{display:flex;gap:min(4vw,44px);align-items:center;justify-content:center;flex-wrap:wrap}
+.phase{display:flex;flex-direction:column;gap:9px;align-items:center;color:#cbd5e1}
+.phaseDot{width:clamp(55px,7vw,90px);aspect-ratio:1;border-radius:50%;background:#0f172a;border:2px solid #64748b;overflow:hidden}
+.phaseDot.full{background:#e5e7eb}.phaseDot.quarter{background:linear-gradient(90deg,#0f172a 0 50%,#e5e7eb 50%)}.phaseDot.crescent{background:radial-gradient(circle at 68% 50%,#e5e7eb 0 37%,transparent 38%),#0f172a}
+.sunBeam{position:absolute;inset:auto auto 50% 7%;width:360px;height:20px;background:linear-gradient(90deg,#f8c75b88,transparent);filter:blur(5px);transform:rotate(-8deg)}
+.footer{position:absolute;bottom:3%;right:6%;left:6%;display:flex;justify-content:space-between;color:#64748b;font-size:12px;z-index:4}
+button{position:absolute;top:5%;left:6%;z-index:8;border:1px solid #ffffff25;background:#ffffff10;color:#fff;padding:10px 15px;border-radius:999px;cursor:pointer}
+</style>
+</head>
+<body>
+<div id="stage">
+<canvas id="stars"></canvas>
+<div class="header"><div class="kicker">فيديو تعليمي • القمر</div><div class="progress"><i id="bar"></i></div></div>
+<button id="play">تشغيل</button>
+
+<section class="scene active" data-start="0" data-end="6">
+ <div class="center">
+  <div class="moon" aria-label="قمر متحرك"></div>
+  <div class="pill">جارُنا الكوني الأقرب 🌙</div>
+ </div>
+ <div style="position:absolute;text-align:center;top:13%">
+  <div class="title">القمر</div><div class="sub">أربعون ثانية لفهم أهم خصائصه</div>
+ </div>
+</section>
+
+<section class="scene" data-start="6" data-end="12">
+ <div class="hero">
+  <div class="copy"><div class="kicker">01 • الحجم</div><h2>ليس صغيرًا كما يبدو</h2><p>قطر القمر يقارب ٣٬٤٧٥ كم، لذلك هو أكبر من أن يكون مجرد نقطة مضيئة في السماء.</p></div>
+  <div class="data"><div class="card"><span>قطر القمر</span><b>٣٬٤٧٥ كم</b></div><div class="card"><span>المسافة المتوسطة عن الأرض</span><b>٣٨٤٬٤٠٠ كم</b></div><div class="card"><span>العمر التقريبي</span><b>٤٫٥ مليار سنة</b></div></div>
+ </div>
+</section>
+
+<section class="scene" data-start="12" data-end="19">
+ <div class="center">
+   <div class="orbitWrap"><div class="orbit"></div><div class="earth"></div><div class="orbMoon"></div><div class="label">دوران حول الأرض • المدار بيضاوي قليلًا</div></div>
+   <div style="position:absolute;top:14%;text-align:center"><div class="title" style="font-size:clamp(38px,6vw,76px)">٢٧٫٣ يوم</div><div class="sub">دورة نجمية واحدة حول الأرض</div></div>
+ </div>
+</section>
+
+<section class="scene" data-start="19" data-end="26">
+ <div class="center">
+   <div class="phaseRow">
+    <div class="phase"><div class="phaseDot crescent"></div><span>هلال</span></div>
+    <div class="phase"><div class="phaseDot quarter"></div><span>تربيع</span></div>
+    <div class="phase"><div class="phaseDot full"></div><span>بدر</span></div>
+   </div>
+   <div class="sunBeam"></div>
+   <div style="position:absolute;top:14%;text-align:center"><div class="title" style="font-size:clamp(40px,6vw,74px)">أطوار القمر</div><div class="sub">ما يتغير هو الجزء المضيء الذي نراه</div></div>
+ </div>
+</section>
+
+<section class="scene" data-start="26" data-end="33">
+ <div class="hero">
+  <div class="moon" style="width:min(42vw,390px);animation-duration:7s"></div>
+  <div class="copy"><div class="kicker">02 • السطح والجاذبية</div><h2>عالم مختلف تمامًا</h2><p>لا يملك القمر غلافًا جويًا كثيفًا مثل الأرض، وتبلغ جاذبيته نحو سدس جاذبية الأرض؛ لذلك تتحرك الأشياء على سطحه بطريقة مختلفة.</p></div>
+ </div>
+</section>
+
+<section class="scene" data-start="33" data-end="40">
+ <div class="hero">
+  <div class="copy"><div class="kicker">03 • الماء</div><h2>يوجد جليد ماء</h2><p>رُصد جليد ماء في مناطق قطبية شديدة البرودة، خصوصًا داخل بعض الفوهات التي لا يصلها ضوء الشمس مباشرة.</p></div>
+  <div class="data"><div class="card"><span>جاذبية القمر</span><b>≈ ١/٦</b></div><div class="card"><span>الغلاف الجوي</span><b>رقيق جدًا</b></div><div class="card"><span>ماء على شكل جليد</span><b>نعم</b></div></div>
+ </div>
+</section>
+
+<section class="scene" data-start="40" data-end="45">
+ <div class="center">
+   <div class="moon" style="width:min(40vw,390px);animation-duration:4.5s"></div>
+   <div style="position:absolute;bottom:10%;text-align:center"><div class="title" style="font-size:clamp(34px,5vw,64px)">القمر في ٤ أرقام</div><div class="sub">٣٬٤٧٥ كم • ٣٨٤٬٤٠٠ كم • ٢٧٫٣ يوم • ١/٦ جاذبية</div></div>
+ </div>
+</section>
+
+<div class="footer"><span>مصادر المعرفة: NASA • معلومات تعليمية مبسطة</span><span>نسخة GitHub</span></div>
+</div>
+<script>
+const D=45, scenes=[...document.querySelectorAll('.scene')], bar=document.getElementById('bar'), btn=document.getElementById('play');
+const stars=document.getElementById('stars'),ctx=stars.getContext('2d');
+function resize(){stars.width=innerWidth;stars.height=innerHeight;drawStars()}
+function drawStars(){ctx.clearRect(0,0,stars.width,stars.height);let n=Math.floor(stars.width*stars.height/8500);for(let i=0;i<n;i++){let x=(i*97)%stars.width,y=(i*53)%stars.height,r=(i%7?1:1.6),a=.2+(i%8)/10;ctx.fillStyle='rgba(255,255,255,'+a+')';ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}}
+addEventListener('resize',resize);resize();
+function show(t){
+  const p=Math.max(0,Math.min(1,t/D));bar.style.width=(p*100)+'%';
+  scenes.forEach(s=>{let a=+s.dataset.start,e=+s.dataset.end;s.classList.toggle('active',t>=a&&t<e)});
+}
+window.setVideoTime=(t)=>show(t);
+let playing=false,start=0;
+function loop(now){if(!playing)return;let t=(now-start)/1000;if(t>D){playing=false;btn.textContent='إعادة';show(D-.001);return}show(t);requestAnimationFrame(loop)}
+btn.onclick=()=>{playing=!playing;if(playing){btn.textContent='إيقاف';start=performance.now();requestAnimationFrame(loop)}else btn.textContent='تشغيل'};
+show(0);
+</script>
+</body>
+</html>
